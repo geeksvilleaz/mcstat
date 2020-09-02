@@ -2,7 +2,7 @@ const NUM_FIELDS = 6;
 const DEFAULT_TIMEOUT_IN_MS = 5000; 
 
 module.exports = {
-  init: function(address, port)
+  init: function(address, port, callback)
   {
     this.address = address;
     this.port = port;
@@ -32,10 +32,12 @@ module.exports = {
         }
       }
 
+      callback();
       client.end();
     });
 
     client.on('timeout', () => {
+      callback();
       client.end();
       process.exit();
     });
@@ -43,6 +45,7 @@ module.exports = {
     client.on('end', () => {});
 
     client.on('error', (error) => {
+      callback();
       console.error(error);
     });
   }
